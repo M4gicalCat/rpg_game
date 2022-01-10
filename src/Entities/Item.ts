@@ -102,4 +102,8 @@ export default class Item {
     public static fromJSON(json :string) :Item{
         return JSON.parse(json) as Item
     }
+
+    public static clone(item: Item): Item {
+        return new Item(item.name, item.type, item.price, item.effect);
+    }
 }

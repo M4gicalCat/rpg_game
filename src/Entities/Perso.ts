@@ -60,17 +60,59 @@ export default class Perso {
                         throw new Error("This type is not assignable.");
                     }
         }
-        if (s.name !== "bag" || i.type === Type.POTION || i.type === Type.FOOD) {
+        if (s.name !== "bag" || i.type === Type.POTION || i.type === Type.FOOD)
+        this.addEffect(i, true);
+        this.slots.forEach(s => {
+            s.items.filter(i => i.effect !== "used");
+        });
+        this.boughtItems.filter(i => i.effect !== "used");
+        s.addItem(this.boughtItems.splice(item, 1)[0]);
+        return true;
+    }
+
+    /**
+     * Change the item of place
+     * @param item
+     * @param slot
+     * >= 0 for a slot, <0 for boughtItems
+     */
+    public assignAgain(item: Item, slot: number): void {
+        let oldSlot = null;
+        for (let i = 0; i < this.slots.length; i++) {
+            if (this.slots[i].items.includes(item)) {
+                oldSlot = this.slots[i];
+                break;
+            }
+        }
+        if (oldSlot === null)
+            throw new Error("Couldn't find the item in your slots");
+        this.boughtItems.push(oldSlot.items.splice(oldSlot.items.indexOf(item), 1)[0]);
+        this.addEffect(item, false);
+        if (slot >= 0)
+            this.assign(this.boughtItems.indexOf(item), slot);
+        else console.log("noice")
+    }
+
+    /**
+     * Adds or removes the effect of the given item
+     * @param item
+     * @param add
+     * true to add the effect, false to remove it
+     * @private
+     */
+    private addEffect(item: Item, add: boolean): void {
+
             // eslint-disable-next-line @typescript-eslint/no-this-alias
             const that = this;
-            let nb = +((i.effect.split('').map((i:string, index:number) => {return index >= 2 ? i : ""})).join(""));
-            nb *= (i.effect.split('')[1] === "+" ? 1 : -1);
-            switch (i.effect.split("")[0]) {
+            let nb = +((item.effect.split('').map((i:string, index:number) => {return index >= 2 ? i : ""})).join(""));
+            nb *= (item.effect.split('')[1] === "+" ? 1 : -1);
+            nb *= (add ? 1 : -1);
+            switch (item.effect.split("")[0]) {
                 case 'a':
                     this.armor += nb;
                     setTimeout(function() {
                         that.armor -= nb;
-                        i.effect = 'used';
+                        item.effect = 'used';
                     }, 1000 * 60 * 5);
                     break;
                 case 'A':
@@ -79,7 +121,7 @@ export default class Perso {
                 case 'l':
                     if (this.life < this.vitality) {
                         this.life = Math.min(this.life + nb, this.vitality);
-                        i.effect = 'used'
+                        item.effect = 'used'
                     }
                     else throw new Error("Your health is already full")
                     break;
@@ -87,30 +129,23 @@ export default class Perso {
                     this.vitality += nb;
                     break;
                 case 's':
-                    if (i.type === Type.POTION){
+                    if (item.type === Type.POTION){
                         this.strength += nb;
-                        i.effect = 'used'
+                        item.effect = 'used'
                     } else {
                         this.strength += nb;
                         setTimeout(function () {
                             that.strength -= nb;
-                            i.effect = 'used';
+                            item.effect = 'used';
                         }, 1000 * 60 * 5);
                     }
                     break;
                 case 'S':
                     this.strength += nb;
-                    if (i.type === Type.POTION)
-                        i.effect = 'used'
+                    if (item.type === Type.POTION)
+                        item.effect = 'used'
                     break;
             }
-        }
-        this.slots.forEach(s => {
-            s.items.filter(i => i.effect !== "used");
-        });
-        this.boughtItems.filter(i => i.effect !== "used");
-        s.addItem(this.boughtItems.splice(item, 1)[0]);
-        return true;
     }
 
     public static fromJSON(json: string): Perso{

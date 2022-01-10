@@ -8,7 +8,7 @@
       <div v-for="s in perso.slots" :key="s.id" class="slots">
         <span @click="assignedSlot=s" class="pointer slot-name">{{ s.name }}</span>
         <div v-if="s.items.length === 0" class="slot-items">empty</div>
-        <div v-else v-for="i in s.items" :key="i.id" class="slot-items" @click="assignedItem=i">
+        <div v-else v-for="i in s.items" :key="i.id" class="slot-items" @click="item=i">
           <span>{{ i.name }}</span>
           <span>{{ i.category }}</span>
         </div>
@@ -17,7 +17,7 @@
 
     <!-- affichage des items achetés -->
 
-    <div>
+    <div @click="assignedSlot=undefined">
       <span>Bought items</span>
       <table>
         <thead>
@@ -52,11 +52,10 @@ export default {
   props: {
     perso: Object
   },
-  data: () :{assignedSlot: Slot, item: Item, assignedItem: Item} => {
+  data: () :{assignedSlot: Slot, item: Item} => {
     return {
       assignedSlot : undefined as unknown as Slot,
       item : undefined as unknown as Item,
-      assignedItem: undefined as unknown as Item
     }
   }
 }

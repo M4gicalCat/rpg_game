@@ -27,7 +27,7 @@ export default class Shop {
     public fillStock(): void {
         const it = items.filter(it => this.itemCat.includes(it.type));
         for (let i = 0; i < 10 && it.length > 0; i++) {
-            this.itemStock.push(Item.fromJSON(JSON.stringify(it.splice(Math.floor(Math.random() * it.length), 1)[0])));
+            this.itemStock.push(Item.clone(it.splice(Math.floor(Math.random() * it.length), 1)[0]));
         }
         this.itemStock.sort((i1, i2) => {
             if (i1.type === i2.type) return 0;
@@ -43,7 +43,7 @@ export default class Shop {
     public fillOrder(): void {
         const it = items.filter(it => this.itemCat.includes(it.type) && !this.itemStock.includes(it));
         for (let i = 0; i < 5 && it.length > 0; i++) {
-            this.itemOrder.push(Item.fromJSON(JSON.stringify(it.splice(Math.floor(Math.random() * it.length), 1)[0])));
+            this.itemOrder.push(Item.clone(it.splice(Math.floor(Math.random() * it.length), 1)[0]));
         }
         this.itemOrder.sort((i1, i2) => {
             if (i1.type === i2.type) return 0;

@@ -50,7 +50,7 @@ export default {
     TownSelector,
     ShopSelector
   },
-  emits: ['item']
+  emits: ['item', 'shop', 'street', 'town']
 }
 </script>
 
