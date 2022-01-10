@@ -1,27 +1,62 @@
-<template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+<template id="app">
+  <team
+      :player="currentPerso"
+      :players="team.map(p => {return {id: p.id, msg: `${p.name} - lvl ${p.level} - gold ${p.gold}`}})"
+      :shop="currentShop"
+      :itemToBuy="itemToBuy"
+      @perso="currentPerso = team.filter(p => p.id === $event)[0];"
+      @undefine-item="this.itemToBuy=undefined"
+  />
+  <world
+      :towns="towns.map(town => {return {id: town.id, msg: `${town.name} : ${town.streets.length} streets`}})"
+      :current-town="currentTown" :current-street="currentStreet" :current-shop="currentShop"
+      @town="currentTown = this.towns.filter(t => t.id === $event)[0]; currentStreet=undefined; currentShop=undefined;"
+      @street="currentStreet=currentTown.streets.filter(s => s.id === $event)[0]; currentShop=undefined;"
+      @shop="currentShop=currentStreet.shops.filter(s => s.id === $event)[0];"
+      @item="itemToBuy=$event"
+  />
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import HelloWorld from './components/HelloWorld.vue';
+import World from "@/components/World/World.vue";
+import {team, towns} from "@/model";
+import Town from "@/Entities/Town";
+import Street from "@/Entities/Street";
+import Shop from "@/Entities/Shop";
+import Team from "@/components/Team/Team.vue";
+import Item from "@/Entities/Item";
 
 @Options({
   components: {
-    HelloWorld,
+    Team,
+    World
   },
+  data: () => {
+    return {
+      team,
+      towns,
+      currentPerso: team[0],
+      currentTown: undefined as unknown as Town,
+      currentStreet: undefined as unknown as Street,
+      currentShop: undefined as unknown as Shop,
+      itemToBuy: undefined as unknown as Item
+    };
+  }
 })
 export default class App extends Vue {}
 </script>
 
 <style>
+body, html {
+  margin: 0;
+  padding: 0;
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  display: grid;
+  height: 100%;
+  width: 100%;
+  grid-template-columns: 50% 50%;
 }
 </style>
