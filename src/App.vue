@@ -29,6 +29,19 @@ import Shop from "@/Entities/Shop";
 import Team from "@/components/Team/Team.vue";
 import Item from "@/Entities/Item";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const music = require("/public/music.mp3");
+const audio = new Audio(music);
+
+document.onclick = () => {
+  if (
+      audio.currentTime > 0
+      && !audio.paused
+      && !audio.ended
+      && audio.readyState > 2
+  ) return;
+  audio.play();
+}
 @Options({
   components: {
     Team,
