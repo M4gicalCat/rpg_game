@@ -46,6 +46,7 @@ export default class Perso {
     }
 
     public assign(item: number, slot: number): boolean {
+        if (slot === -1) return false;
         if (!this.boughtItems[item] || !this.slots[slot]) {
             throw new Error("Wrong index to assign");
         }
@@ -60,7 +61,10 @@ export default class Perso {
                         throw new Error("This type is not assignable.");
                     }
         }
-        if (s.name !== "bag" || i.type === Type.POTION || i.type === Type.FOOD)
+        if (i.effect[0] === 'a' || i.effect[0] === 's')
+            if (s.name !== "bag")
+                throw new Error("You can only assign this item in the Bag");
+        if (s.name !== "bag" || i.effect[0] === 'a' || i.effect[0] === 's' || i.type === Type.POTION || i.type === Type.FOOD)
         this.addEffect(i, true);
         this.slots.forEach(s => {
             s.items.filter(i => i.effect !== "used");
@@ -87,10 +91,10 @@ export default class Perso {
         if (oldSlot === null)
             throw new Error("Couldn't find the item in your slots");
         this.boughtItems.push(oldSlot.items.splice(oldSlot.items.indexOf(item), 1)[0]);
-        this.addEffect(item, false);
+        if (oldSlot.name !== "bag")
+            this.addEffect(item, false);
         if (slot >= 0)
             this.assign(this.boughtItems.indexOf(item), slot);
-        else console.log("noice")
     }
 
     /**
@@ -146,6 +150,17 @@ export default class Perso {
                         item.effect = 'used'
                     break;
             }
+    }
+
+    public sell(price: number, item: Item): void {
+        this.gold += price;
+        // removes the item from its slot
+        try {
+            this.assignAgain(item, -1);
+        } catch (e) {
+            console.log("")
+        }
+        this.boughtItems.splice(this.boughtItems.indexOf(item), 1);
     }
 
     public static fromJSON(json: string): Perso{

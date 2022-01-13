@@ -5,11 +5,13 @@
     />
     <perso-slots
       :perso="perso"
+      :shop="shop"
     />
     <perso-ops
       :perso="perso"
       :shop="shop"
       :itemToBuy="itemToBuy"
+      :itemToOrder="itemToOrder"
       @undefine-item="$emit('undefine-item')"
     />
   </div>
@@ -29,7 +31,8 @@ export default {
   props: {
     perso: Object,
     shop: Object,
-    itemToBuy: Object
+    itemToBuy: Object,
+    itemToOrder: Object
   },
   emits: ["undefine-item"],
 }

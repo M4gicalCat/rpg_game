@@ -1,6 +1,6 @@
 <template>
   <div id="team">
-    <perso-selector
+    <perso-selector id="perso-selector"
       :persos="players"
       @perso="$emit('perso', $event)"
     />
@@ -9,8 +9,8 @@
       :perso="player"
       :shop="shop"
       :item-to-buy="itemToBuy"
+      :itemToOrder="itemToOrder"
       @undefine-item="$emit('undefine-item')"
-
     />
 
   </div>
@@ -26,7 +26,8 @@ export default {
     player: Object,
     players: Array,
     shop: Object,
-    itemToBuy: Object
+    itemToBuy: Object,
+    itemToOrder: Object
   }
 }
 </script>
@@ -35,5 +36,9 @@ export default {
 #team {
   grid-column-start: 1;
   grid-column-end: 2;
+}
+
+#perso-selector {
+  margin-bottom: 2em;
 }
 </style>

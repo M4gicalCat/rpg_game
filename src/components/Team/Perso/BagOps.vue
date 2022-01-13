@@ -1,5 +1,5 @@
 <template>
-  <table>
+  <table id="bag-ops">
     <thead>
       <tr>
         <th>slot</th> <th>item</th>
@@ -14,6 +14,7 @@
   </table>
   <button v-if="item!==undefined" @click="this.assign(item)">Assign</button>
   <span class="error" v-if="err !== undefined">{{err}}</span>
+  <button v-if="shop !== undefined && item !== undefined" @click="sell()">Sell for {{price}}</button>
 </template>
 
 <script lang="ts">
@@ -21,15 +22,16 @@
 import Item from "@/Entities/Item";
 import Perso from "@/Entities/Perso";
 import Slot from "@/Entities/Slot";
+import Shop from "@/Entities/Shop";
 
 export default {
   name: "BagOps",
   props: {
     perso: Object as unknown as Perso,
     item: Object as unknown as Item,
-    assignedSlot: Object as unknown as Slot
+    assignedSlot: Object as unknown as Slot,
+    shop: Object as unknown as Shop
   },
-  emits: ['item-undefined'],
   methods: {
     assign: function (item: Item): void {
       /*I love typescript (not here)*/
@@ -37,16 +39,12 @@ export default {
         //@ts-ignore
         this.perso.assignAgain(item, this.assignedSlot ? this.perso.slots.indexOf(this.assignedSlot) : -1);
         // @ts-ignore
-        this.$emit('item-undefined'); this.err=undefined;
+        this.err=undefined;
         return;
-      } catch (e) {
-
-      }
+      } catch (e) {}
       try {
         //@ts-ignore
         this.perso.assign(this.perso.boughtItems.indexOf(item), this.perso.slots.indexOf(this.assignedSlot));
-        //@ts-ignore
-        this.$emit('item-undefined');
         //@ts-ignore
         this.err=undefined;
       } catch (e) {
@@ -58,12 +56,38 @@ export default {
           that.err = undefined;
         }, 10000);
       }
+    },
+    sell: function (): void {
+      //@ts-ignore
+      this.shop.buy(this.item);
+      //@ts-ignore
+      this.perso.sell(this.price, this.item);
+      //@ts-ignore
+      this.$emit('item');
     }
   },
-  data: (): { err: string; } => {
+  data: (): { err: string, price: number} => {
     return {
-      err: undefined as unknown as string
+      err: undefined as unknown as string,
+      price: undefined as unknown as number
     };
+  },
+  emits: ['item'],
+  watch: {
+    item() {
+      //@ts-ignore
+      if (this.item !== undefined && this.shop !== undefined) {
+        //@ts-ignore
+        this.price = this.shop.estimate(this.item);
+      }
+    },
+    shop() {
+      //@ts-ignore
+      if (this.item !== undefined && this.shop !== undefined) {
+        //@ts-ignore
+        this.price = this.shop.estimate(this.item);
+      }
+    }
   }
 }
 </script>
@@ -78,4 +102,6 @@ table, th, td {
 .error {
   color: red;
 }
+
+#bag-ops {margin-top: 1em}
 </style>

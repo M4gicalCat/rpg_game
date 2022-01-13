@@ -1,14 +1,16 @@
-<template>
+<template id="perso-slot">
   <div>
 
     <!-- affichage des slots -->
 
     <div>
-      <span class="slot-name">Slots</span><span class="slot-items">Items</span>
-      <div v-for="s in perso.slots" :key="s.id" class="slots">
+      <div class="slots strong">
+        <span class="slot-name">Slots</span><span class="slot-items">Items</span>
+      </div>
+      <div v-for="s in perso.slots" :key="s.id" class="slots bordered">
         <span @click="assignedSlot=s" class="pointer slot-name">{{ s.name }}</span>
-        <div v-if="s.items.length === 0" class="slot-items">empty</div>
-        <div v-else v-for="i in s.items" :key="i.id" class="slot-items" @click="item=i">
+        <div v-if="s.items.length === 0" class="slot-items bordered-left">empty</div>
+        <div v-else v-for="i in s.items" :key="i.id" class="slot-items bordered-left" @click="item=i">
           <span>{{ i.name }}</span>
           <span>{{ i.category }}</span>
         </div>
@@ -18,16 +20,16 @@
     <!-- affichage des items achetés -->
 
     <div @click="assignedSlot=undefined">
-      <span>Bought items</span>
-      <table>
+      <table v-if="perso.boughtItems.length > 0">
+        <caption class="strong">Bought Items</caption>
         <thead>
           <tr>
-            <th>Item</th> <th>Type</th>
+            <th>Item</th> <th>Category</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="i in perso.boughtItems" :key="i.id"  @click="item=i" class="pointer">
-            <td>{{i.name}}</td><td>{{i.category}}</td>
+            <td class="no-border-right">{{i.name}}</td><td class="no-border-left text-right">{{i.category}}</td>
           </tr>
         </tbody>
       </table>
@@ -37,8 +39,9 @@
   <bag-ops
       :perso="perso"
       :item="item"
+      :shop="shop"
       :assignedSlot="assignedSlot"
-      @item-undefined="item=undefined;"
+      @item="item=undefined"
   />
 </template>
 
@@ -50,7 +53,8 @@ export default {
   name: "PersoSlots",
   components: {BagOps},
   props: {
-    perso: Object
+    perso: Object,
+    shop: Object
   },
   data: () :{assignedSlot: Slot, item: Item} => {
     return {
@@ -71,7 +75,7 @@ table, th, td {
 .slots {
   width: 500px;
   display: grid;
-  grid-template-columns: auto 10px auto;
+  grid-template-columns: 50% 50%;
 }
 
 .slot-name {
@@ -80,12 +84,45 @@ table, th, td {
 }
 
 .slot-items {
-  grid-column-start: 3;
-  grid-column-end: 4;
+  grid-column-start: 2;
+  grid-column-end: 3;
   text-align: left;
+}
+
+.strong {
+  font-weight: bold;
+}
+
+.bordered {
+  border: 1px solid black;
+}
+
+.bordered > * {
+  padding: 1em;
+}
+
+.bordered-left {
+  border-left: 1px solid black;
 }
 
 .pointer {
   cursor: pointer;
+}
+
+.no-border-right {
+  border-right: unset;
+}
+
+.no-border-left {
+  border-left: unset;
+}
+
+.text-right {
+  text-align: right;
+}
+
+#perso-slot > * {
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 </style>

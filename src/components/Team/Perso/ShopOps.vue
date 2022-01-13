@@ -1,7 +1,9 @@
 <template>
   <div>
-    <span>{{ item.name }} : {{item.price}}🪙</span>
-    <button @click="$emit('buy', item)">Buy</button>
+    <span v-if="itemToBuy!==undefined">{{ itemToBuy.name }} : {{itemToBuy.price}}🪙</span>
+    <button v-if="itemToBuy!==undefined" @click="$emit('buy', itemToBuy)">Buy</button>
+    <span v-if="itemToOrder!==undefined">{{itemToOrder.name}} : {{itemToOrder.price}}</span>
+    <button v-if="itemToOrder!==undefined" @click="$emit('order', itemToOrder)">Order</button>
   </div>
 
 </template>
@@ -10,9 +12,10 @@
 export default {
   name: "ShopOps",
   props: {
-    item: Object
+    itemToBuy: Object,
+    itemToOrder: Object
   },
-  emits: ['buy']
+  emits: ['buy', 'order']
 }
 </script>
 

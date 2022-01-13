@@ -1,15 +1,17 @@
 <template>
   <div>
     <shop-ops
-        v-if="shop!==undefined && itemToBuy!==undefined"
-        :item="itemToBuy"
+        v-if="shop!==undefined && (itemToBuy!==undefined || itemToOrder !== undefined)"
+        :item-to-buy="itemToBuy"
+        :item-to-order="itemToOrder"
+        @order="shop.order(shop.itemOrder.indexOf($event)); $emit('undefine-item')"
         @buy="perso.buy($event, shop); $emit('undefine-item')"
     />
   </div>
 </template>
 
-<script>
-import ShopOps from "@/components/Team/Perso/ShopOps";
+<script lang="ts">
+import ShopOps from "@/components/Team/Perso/ShopOps.vue";
 export default {
   name: "PersoOps",
   components: {ShopOps},
@@ -17,6 +19,7 @@ export default {
     perso: Object,
     shop: Object,
     itemToBuy: Object,
+    itemToOrder: Object
   },
   emits: ["undefine-item"]
 }

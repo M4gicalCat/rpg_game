@@ -4,8 +4,9 @@
       :players="team.map(p => {return {id: p.id, msg: `${p.name} - lvl ${p.level} - gold ${p.gold}`}})"
       :shop="currentShop"
       :itemToBuy="itemToBuy"
+      :itemToOrder="itemToOrder"
       @perso="currentPerso = team.filter(p => p.id === $event)[0];"
-      @undefine-item="this.itemToBuy=undefined"
+      @undefine-item="this.itemToBuy=undefined;this.itemToOrder=undefined"
   />
   <world
       :towns="towns.map(town => {return {id: town.id, msg: `${town.name} : ${town.streets.length} streets`}})"
@@ -14,6 +15,7 @@
       @street="currentStreet=currentTown.streets.filter(s => s.id === $event)[0]; currentShop=undefined;"
       @shop="currentShop=currentStreet.shops.filter(s => s.id === $event)[0];"
       @item="itemToBuy=$event"
+      @itemOrder="itemToOrder=$event"
   />
 </template>
 
@@ -40,7 +42,8 @@ import Item from "@/Entities/Item";
       currentTown: undefined as unknown as Town,
       currentStreet: undefined as unknown as Street,
       currentShop: undefined as unknown as Shop,
-      itemToBuy: undefined as unknown as Item
+      itemToBuy: undefined as unknown as Item,
+      itemToOrder: undefined as unknown as Item
     };
   }
 })
@@ -58,5 +61,9 @@ body, html {
   height: 100%;
   width: 100%;
   grid-template-columns: 50% 50%;
+}
+
+select {
+  padding: 0.5em;
 }
 </style>

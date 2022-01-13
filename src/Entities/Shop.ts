@@ -41,7 +41,26 @@ export default class Shop {
      * @public
      */
     public fillOrder(): void {
-        const it = items.filter(it => this.itemCat.includes(it.type) && !this.itemStock.includes(it));
+        let it = items.filter(it => this.itemCat.includes(it.type));
+
+        /*
+        Somehow, it.filter wasn't working
+        Don't ask me why, I wouldn't know.
+         */
+        const newIt = [];
+        for (let i = 0; i < it.length; i++) {
+            for (let j = 0; j < this.itemStock.length; j++) {
+                if (this.itemStock[j].name === it[i].name && i < it.length && j < this.itemStock.length) {
+                    i++;
+                    j = i < it.length ? 0 : Number.MAX_VALUE;
+                }
+            }
+            if (it[i])
+                newIt.push(it[i]);
+        }
+        it = newIt;
+        console.log(it)
+
         for (let i = 0; i < 5 && it.length > 0; i++) {
             this.itemOrder.push(Item.clone(it.splice(Math.floor(Math.random() * it.length), 1)[0]));
         }
@@ -59,7 +78,7 @@ export default class Shop {
 
     public estimate(item: Item): number {
         if (!this.itemCat.includes(item.type)) return -1;
-        return item.price - Math.random() * 0.9 * item.price;
+        return Math.max(Math.round(item.price - Math.random() * 0.9 * item.price), 0);
     }
 
     public buy(item: Item): void {
@@ -68,7 +87,11 @@ export default class Shop {
 
     public order(id: number): void {
         if (!this.itemOrder[id]) throw new Error(`Wrong id : ${id}`);
-        this.itemStock.push(...this.itemOrder.splice(id, 1));
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const that = this;
+        setTimeout(function () {
+            that.itemStock.push(...that.itemOrder.splice(id, 1))
+        }, 30_000);
     }
 
     public static fromJSON(json: string): Shop {

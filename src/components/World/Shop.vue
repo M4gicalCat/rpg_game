@@ -1,10 +1,12 @@
 <template>
   <div id="shop">
-    <div id="stock">
+    <div>
+      <h1>Buy</h1>
+      <div id="stock">
       <table>
         <thead>
         <tr>
-          <th>Item name</th> <th>Item price</th> <th>Item category</th>
+          <th>Name</th> <th>Price</th> <th>Category</th>
         </tr>
         </thead>
         <tbody>
@@ -14,7 +16,24 @@
         </tbody>
       </table>
     </div>
-    <div id="order"></div>
+    </div>
+    <div>
+      <h1>Order</h1>
+      <div id="order">
+      <table>
+        <thead>
+        <tr>
+          <th>Item</th> <th>Price</th> <th>Category</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr :key="i" v-for="i in shop.itemOrder" @click="$emit('itemOrder', i);">
+          <td>{{i.name}}</td><td>{{i.price}}</td><td>{{i.category}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    </div>
   </div>
 </template>
 
@@ -24,12 +43,18 @@ export default {
   props: {
     shop: Object
   },
-  emits: ['item']
+  emits: ['item', 'itemOrder']
 }
 </script>
 
 <style scoped>
 .buy-item {
   cursor: pointer;
+}
+
+#shop {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
 }
 </style>
